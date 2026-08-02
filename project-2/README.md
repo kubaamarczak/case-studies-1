@@ -70,8 +70,8 @@ also nur teilweise; weitere lokale Faktoren spielen ebenfalls eine Rolle.
 ## Reproduzierbarkeit
 
 ```bash
-git clone <repo-url>
-cd projekt-2-klimaanalyse
+git clone https://github.com/kubaamarczak/case-studies-1
+cd projekt-2
 Rscript R/01_data_cleaning.R
 Rscript R/02_eda.R
 Rscript R/03_hypothesis_tests.R
