@@ -1,10 +1,10 @@
 # ============================================================
-# 05 - Räumliche Visualisierung: Stationskarte NRW
-# Zeigt Jahresmitteltemperatur (Farbe) und Höhenlage (Größe) je Station
+# 05 - Spatial visualization: station map of NRW
+# Shows annual mean temperature (color) and elevation (size) per station
 #
-# Benötigt Live-Internetzugriff:
-# - geodata::gadm()   lädt die Bundesland-Geometrie (GADM)
-# - osmdata::opq()    fragt den Flusslauf der Ruhr per Overpass API ab
+# Requires live internet access:
+# - geodata::gadm()   downloads the federal-state geometry (GADM)
+# - osmdata::opq()    queries the Ruhr river course via the Overpass API
 # ============================================================
 
 library(dplyr)
@@ -17,7 +17,7 @@ library(ggrepel)
 
 df_weather <- read_csv("data/weather_clean.csv", show_col_types = FALSE)
 
-# ---- Stationsdaten: letztes Jahr mit vollständigen Daten für alle 6 Stationen ----
+# ---- Station data: last year with complete data for all 6 stations ----
 last_complete_year <- df_weather %>%
   group_by(year) %>%
   filter(n() == 6, all(!is.na(annual))) %>%
@@ -41,12 +41,12 @@ station_data <- tibble::tribble(
 
 station_data_sf <- st_as_sf(station_data, coords = c("lon", "lat"), crs = 4326)
 
-# ---- Bundesland-Geometrie (NRW) ----
+# ---- Federal-state geometry (NRW) ----
 germany_states <- gadm(country = "DEU", level = 1, path = tempdir())
 germany_states_sf <- st_as_sf(germany_states)
 nrw <- germany_states_sf %>% filter(NAME_1 == "Nordrhein-Westfalen")
 
-# ---- Flusslauf der Ruhr ----
+# ---- Ruhr river course ----
 q <- opq(bbox = c(6.65, 50.95, 8.75, 51.75), timeout = 120) %>%
   add_osm_feature(key = "waterway", value = c("river", "stream", "canal")) %>%
   add_osm_feature(key = "name", value = "Ruhr")
@@ -54,7 +54,7 @@ q <- opq(bbox = c(6.65, 50.95, 8.75, 51.75), timeout = 120) %>%
 osm_rivers <- osmdata_sf(q)
 ruhr <- osm_rivers$osm_lines %>% filter(grepl("Ruhr", name, ignore.case = TRUE))
 
-# ---- Karte ----
+# ---- Map ----
 map_plot <- ggplot() +
   geom_sf(data = nrw, fill = "grey95", color = "grey60") +
   geom_sf(data = ruhr, color = "#5DA5DA", linewidth = 1) +
@@ -75,8 +75,8 @@ map_plot <- ggplot() +
   scale_size_area(max_size = 12) +
   scale_color_viridis_c() +
   labs(
-    color = "Jahresmitteltemperatur [°C]",
-    size = "Höhe [m ü. NHN]"
+    color = "Annual mean temperature [°C]",
+    size = "Elevation [m above sea level]"
   ) +
   theme_minimal() +
   theme(

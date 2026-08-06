@@ -1,8 +1,8 @@
 # ============================================================
-# 01 - Datenimport & Aufbereitung
-# Quelle: European Climate Assessment & Dataset (ECA&D)
+# 01 - Data import & preparation
+# Source: European Climate Assessment & Dataset (ECA&D)
 #         https://www.ecad.eu/download/millennium/millennium.php
-# 6 Stationen im Ruhrgebiet / Sauerland
+# 6 stations in the Ruhr area / Sauerland
 # ============================================================
 
 library(dplyr)
@@ -24,13 +24,13 @@ col_names <- c(
   "july", "august", "september", "october", "november", "december"
 )
 
-# Höhenlage jeder Station in m ü. NHN (für die Analyse des adiabatischen Effekts)
+# Elevation of each station in m above sea level (for the adiabatic effect analysis)
 station_labels <- c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")
 elevation_m <- setNames(c(31, 150, 120, 218, 472, 839), station_labels)
 
-#' Liest eine ECA&D-Stationsdatei ein und bringt sie in ein einheitliches Format.
+#' Reads an ECA&D station file and brings it into a consistent format.
 #'
-#' Die Rohdaten liegen als 1/100 °C vor und kennzeichnen fehlende Werte mit -9999.99.
+#' The raw data is given in 1/100 °C and flags missing values with -9999.99.
 read_station <- function(path) {
   read.table(path, skip = 32, header = FALSE, col.names = col_names) %>%
     mutate(across(-c(souid, year), ~ na_if(as.double(.x) / 100, -9999.99)))
@@ -46,7 +46,6 @@ df_weather <- lapply(stations, read_station) %>%
 dir.create("data", showWarnings = FALSE)
 write_csv(df_weather, "data/weather_clean.csv")
 
-cat("Aufbereitete Daten gespeichert unter data/weather_clean.csv\n")
-cat("Stationen:", paste(levels(df_weather$station), collapse = ", "), "\n")
-cat("Zeitraum:", min(df_weather$year), "-", max(df_weather$year), "\n")
-
+cat("Cleaned data saved to data/weather_clean.csv\n")
+cat("Stations:", paste(levels(df_weather$station), collapse = ", "), "\n")
+cat("Period:", min(df_weather$year), "-", max(df_weather$year), "\n")

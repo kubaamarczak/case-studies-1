@@ -108,10 +108,10 @@ analysis.
 ```bash
 git clone https://github.com/kubaamarczak/case-studies-1
 cd project-5
-Rscript R/01_data_cleaning.R
-Rscript R/02_eda.R
-Rscript R/03_mult_log_reg.R
-Rscript R/04_xgboost.R
+Rscript 01_data_cleaning.R
+Rscript 02_eda.R
+Rscript 03_mult_log_reg.R
+Rscript 04_xgboost.R
 ```
  
 Required packages: `readr`, `dplyr`, `tidyr`, `ggplot2`, `patchwork`, `nnet`,

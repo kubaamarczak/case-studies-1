@@ -73,11 +73,11 @@ explains the spatial differences; other local factors play a role as well.
 ```bash
 git clone https://github.com/kubaamarczak/case-studies-1
 cd project-2
-Rscript R/01_data_cleaning.R
-Rscript R/02_eda.R
-Rscript R/03_hypothesis_tests.R
-Rscript R/04_adiabatic_effect.R
-Rscript R/05_spatial_map.R
+Rscript 01_data_cleaning.R
+Rscript 02_eda.R
+Rscript 03_hypothesis_tests.R
+Rscript 04_adiabatic_effect.R
+Rscript 05_spatial_map.R
 ```
 
 Required packages: `dplyr`, `readr`, `tidyr`, `ggplot2`, `patchwork`, `sf`, `ggrepel`.
