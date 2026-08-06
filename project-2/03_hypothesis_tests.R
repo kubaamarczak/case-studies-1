@@ -10,15 +10,20 @@ library(readr)
 
 df_weather <- read_csv("data/weather_clean.csv", show_col_types = FALSE) %>%
   mutate(station = factor(station,
-    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")))
+    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")
+  ))
 
 # ------------------------------------------------------------
 # (a) Temporal comparison using Essen as an example
 # Comparison periods: 1950-1980 (start of industrialization/economic miracle)
 # vs. 1990-2020 (modern era)
 # ------------------------------------------------------------
-essen_early <- df_weather %>% filter(station == "Essen", between(year, 1950, 1980)) %>% pull(annual)
-essen_late  <- df_weather %>% filter(station == "Essen", between(year, 1990, 2020)) %>% pull(annual)
+essen_early <- df_weather %>%
+  filter(station == "Essen", between(year, 1950, 1980)) %>%
+  pull(annual)
+essen_late <- df_weather %>%
+  filter(station == "Essen", between(year, 1990, 2020)) %>%
+  pull(annual)
 
 cat("\n--- (a) Temporal comparison: Essen 1950-1980 vs. 1990-2020 ---\n")
 cat("Mean 1950-1980:", round(mean(essen_early, na.rm = TRUE), 2), "°C\n")
@@ -35,7 +40,8 @@ cat("Welch's t-test (H1: warming): p =", signif(welch_test$p.value, 3), "\n")
 
 # Effect size: Cohen's d (pooled SD, used here as a supplement to the Welch test)
 cohens_d <- function(x, y) {
-  nx <- sum(!is.na(x)); ny <- sum(!is.na(y))
+  nx <- sum(!is.na(x))
+  ny <- sum(!is.na(y))
   pooled_sd <- sqrt(((nx - 1) * var(x, na.rm = TRUE) + (ny - 1) * var(y, na.rm = TRUE)) / (nx + ny - 2))
   (mean(x, na.rm = TRUE) - mean(y, na.rm = TRUE)) / pooled_sd
 }
@@ -58,8 +64,10 @@ cat("n years with complete data at all stations:", n_distinct(df_spatial$year), 
 # Kruskal-Wallis as a robust alternative to ANOVA (group comparison, no strict
 # normality assumption required)
 kw_test <- kruskal.test(annual ~ station, data = df_spatial)
-cat("Kruskal-Wallis test: chi² =", round(kw_test$statistic, 2),
-    ", df =", kw_test$parameter, ", p =", signif(kw_test$p.value, 3), "\n")
+cat(
+  "Kruskal-Wallis test: chi² =", round(kw_test$statistic, 2),
+  ", df =", kw_test$parameter, ", p =", signif(kw_test$p.value, 3), "\n"
+)
 
 # Effect size: epsilon-squared
 n_obs <- sum(!is.na(df_spatial$annual))
@@ -91,4 +99,3 @@ results <- list(
   epsilon_sq = epsilon_sq
 )
 saveRDS(results, "data/hypothesis_test_results.rds")
-

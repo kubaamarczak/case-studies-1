@@ -61,9 +61,11 @@ map_plot <- ggplot() +
   geom_sf(data = station_data_sf, aes(color = annual_mean, size = elevation)) +
   geom_text_repel(
     data = station_data_sf,
-    aes(x = st_coordinates(station_data_sf)[, 1],
-        y = st_coordinates(station_data_sf)[, 2],
-        label = station),
+    aes(
+      x = st_coordinates(station_data_sf)[, 1],
+      y = st_coordinates(station_data_sf)[, 2],
+      label = station
+    ),
     size = 4.5,
     point.padding = 0.3,
     box.padding = 0.5,

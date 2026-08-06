@@ -12,7 +12,7 @@ library(tidyr)
 library(ggplot2)
 
 col_main <- "#1a6faf"
-col_alt  <- "#C0392B"
+col_alt <- "#C0392B"
 
 ## 1. Data import, level of measurement, cleaning, target distribution
 
@@ -122,23 +122,31 @@ n_final <- nrow(dat_final)
 ## Set levels of measurement
 dat_final <- dat_final %>%
   mutate(
-    w6sgq4  = factor(w6sgq4, levels = 1:5,
-                     labels = c("walking", "bicycle", "public_transport",
-                                "gasoline_car", "electric_car")),
-    cntry   = factor(cntry),
-    gndr    = factor(gndr, levels = c(1, 2), labels = c("male", "female")),
-    mnactic = factor(mnactic, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                     labels = c("paid_work", "education", "unemployed_looking",
-                                "unemployed_not_looking", "sick_disabled", "retired",
-                                "community_military", "housework", "other")),
-    eisced   = ordered(eisced, levels = 1:7),
+    w6sgq4 = factor(w6sgq4,
+      levels = 1:5,
+      labels = c(
+        "walking", "bicycle", "public_transport",
+        "gasoline_car", "electric_car"
+      )
+    ),
+    cntry = factor(cntry),
+    gndr = factor(gndr, levels = c(1, 2), labels = c("male", "female")),
+    mnactic = factor(mnactic,
+      levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+      labels = c(
+        "paid_work", "education", "unemployed_looking",
+        "unemployed_not_looking", "sick_disabled", "retired",
+        "community_military", "housework", "other"
+      )
+    ),
+    eisced = ordered(eisced, levels = 1:7),
     hinctnta = ordered(
       hinctnta,
       levels = 1:10,
       labels = paste0("decile_", 1:10)
     ),
     netusoft = ordered(netusoft, levels = 1:5),
-    hincfel  = ordered(hincfel, levels = 1:4)
+    hincfel = ordered(hincfel, levels = 1:4)
   )
 
 ## Target distribution after cleaning
@@ -176,4 +184,3 @@ p_target
 ## Save the cleaned dataset for the subsequent tasks
 
 write_csv(dat_final, "thema5_cleaned.csv")
-

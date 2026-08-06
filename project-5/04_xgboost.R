@@ -24,15 +24,17 @@ library(readr)
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = fct_collapse(mnactic, other = c("other", "community_military")),
@@ -54,12 +56,15 @@ print(table(dat$w6sgq4))
 ## variables are one-hot encoded. 12 predictors. Trees do not need a
 ## reference category, so all k dummies are kept
 
-predictors_12 <- c("cntry", "w6age_c", "gndr", "mnactic",
-                   "hinctnta", "hincfel",
-                   "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8", "w6sgq22")
+predictors_12 <- c(
+  "cntry", "w6age_c", "gndr", "mnactic",
+  "hinctnta", "hincfel",
+  "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8", "w6sgq22"
+)
 
 X <- model.matrix(~ . - 1,
-                  data = dplyr::select(dat, all_of(predictors_12)))
+  data = dplyr::select(dat, all_of(predictors_12))
+)
 
 cat("Feature matrix:", nrow(X), "rows x", ncol(X), "columns\n")
 
@@ -81,14 +86,14 @@ set.seed(2026)
 train_idx <- createDataPartition(dat$w6sgq4, p = 0.75, list = FALSE)
 
 X_train <- X[train_idx, ]
-X_test  <- X[-train_idx, ]
+X_test <- X[-train_idx, ]
 y_train <- y[train_idx]
-y_test  <- y[-train_idx]
+y_test <- y[-train_idx]
 
 cat("Train n:", nrow(X_train), "  Test n:", nrow(X_test), "\n")
 
 dtrain <- xgb.DMatrix(data = X_train, label = y_train)
-dtest  <- xgb.DMatrix(data = X_test,  label = y_test)
+dtest <- xgb.DMatrix(data = X_test, label = y_test)
 
 
 ## -----------------------------------------------------------------------------
@@ -124,7 +129,8 @@ cv_result <- xgb.cv(
 best_n <- which.min(cv_result$evaluation_log$test_mlogloss_mean)
 cat("\noptimal nrounds:", best_n, "\n")
 cat("CV test mlogloss:", round(
-  cv_result$evaluation_log$test_mlogloss_mean[best_n], 4), "\n")
+  cv_result$evaluation_log$test_mlogloss_mean[best_n], 4
+), "\n")
 
 
 ## -----------------------------------------------------------------------------
@@ -145,7 +151,7 @@ xgb_model <- xgb.train(
 
 ## 7. Evaluation – without upsampling
 
-y_pred      <- predict(xgb_model, dtest)
+y_pred <- predict(xgb_model, dtest)
 pred_labels <- levels(dat$w6sgq4)[y_pred + 1L]
 true_labels <- levels(dat$w6sgq4)[y_test + 1L]
 
@@ -171,10 +177,12 @@ print(round(cm$byClass[, "Sensitivity"], 3))
 ## same seed as in step 7 of the MLR script
 
 train_df <- data.frame(X_train,
-                       w6sgq4 = factor(y_train,
-                                       levels = 0:4,
-                                       labels = levels(dat$w6sgq4)),
-                       check.names = FALSE)
+  w6sgq4 = factor(y_train,
+    levels = 0:4,
+    labels = levels(dat$w6sgq4)
+  ),
+  check.names = FALSE
+)
 
 set.seed(2026)
 train_up <- upSample(
@@ -219,13 +227,13 @@ xgb_up <- xgb.train(
 
 ## 9. Evaluation – with upsampling
 
-y_pred_up      <- predict(xgb_up, dtest)
+y_pred_up <- predict(xgb_up, dtest)
 pred_up_labels <- levels(dat$w6sgq4)[y_pred_up + 1L]
 
 
 cm_up <- confusionMatrix(
   factor(pred_up_labels, levels = levels(dat$w6sgq4)),
-  factor(true_labels,    levels = levels(dat$w6sgq4))
+  factor(true_labels, levels = levels(dat$w6sgq4))
 )
 
 cat("\n=== xgboost – with upsampling ===\n")
@@ -252,16 +260,18 @@ imp_top20 <- head(importance, 20)
 p_importance <- ggplot(imp_top20, aes(x = reorder(Feature, Gain), y = Gain)) +
   geom_col(fill = "#1a6faf") +
   coord_flip() +
-  labs(x = NULL, y = "Gain",
-       caption = "Feature importance (gain), upsampled XGBoost model, top 20 features.") +
+  labs(
+    x = NULL, y = "Gain",
+    caption = "Feature importance (gain), upsampled XGBoost model, top 20 features."
+  ) +
   theme_bw(base_size = 11)
 
 p_importance
 
-#library(tikzDevice)
-#tikz("xgb_importance.tex", width = 5.5, height = 4)
-#p_importance
-#dev.off()
+# library(tikzDevice)
+# tikz("xgb_importance.tex", width = 5.5, height = 4)
+# p_importance
+# dev.off()
 
 
 ## -----------------------------------------------------------------------------
@@ -271,16 +281,26 @@ p_importance
 cat("\n\n=== direct comparison (same n=8072, same seed, same split) ===\n")
 cat(sprintf("%-30s %8s %8s\n", "Metric", "MLR", "XGBoost"))
 cat(strrep("-", 50), "\n")
-cat(sprintf("%-30s %8s %8s\n", "Accuracy (without upsampling)",
-            "0.511", round(cm$overall["Accuracy"], 3)))
-cat(sprintf("%-30s %8s %8s\n", "Kappa    (without upsampling)",
-            "0.159", round(cm$overall["Kappa"], 3)))
-cat(sprintf("%-30s %8s %8s\n", "Accuracy (with upsampling)",
-            "0.372", round(cm_up$overall["Accuracy"], 3)))
-cat(sprintf("%-30s %8s %8s\n", "Kappa    (with upsampling)",
-            "0.189", round(cm_up$overall["Kappa"], 3)))
-cat(sprintf("%-30s %8s %8s\n", "bicycle sensitivity (up)", "0.382",
-            round(cm_up$byClass["Class: bicycle", "Sensitivity"], 3)))
+cat(sprintf(
+  "%-30s %8s %8s\n", "Accuracy (without upsampling)",
+  "0.511", round(cm$overall["Accuracy"], 3)
+))
+cat(sprintf(
+  "%-30s %8s %8s\n", "Kappa    (without upsampling)",
+  "0.159", round(cm$overall["Kappa"], 3)
+))
+cat(sprintf(
+  "%-30s %8s %8s\n", "Accuracy (with upsampling)",
+  "0.372", round(cm_up$overall["Accuracy"], 3)
+))
+cat(sprintf(
+  "%-30s %8s %8s\n", "Kappa    (with upsampling)",
+  "0.189", round(cm_up$overall["Kappa"], 3)
+))
+cat(sprintf(
+  "%-30s %8s %8s\n", "bicycle sensitivity (up)", "0.382",
+  round(cm_up$byClass["Class: bicycle", "Sensitivity"], 3)
+))
 
 
 ## -----------------------------------------------------------------------------

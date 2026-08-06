@@ -9,7 +9,8 @@ library(ggplot2)
 
 df_weather <- read_csv("data/weather_clean.csv", show_col_types = FALSE) %>%
   mutate(station = factor(station,
-    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")))
+    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")
+  ))
 
 # Elevation correction: expected adiabatic effect of -0.65 °C / 100 m of elevation
 df_weather <- df_weather %>%

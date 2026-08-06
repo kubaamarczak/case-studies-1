@@ -11,7 +11,8 @@ library(patchwork)
 
 df_weather <- read_csv("data/weather_clean.csv", show_col_types = FALSE) %>%
   mutate(station = factor(station,
-    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")))
+    levels = c("Duisburg", "Essen", "Dortmund", "Arnsberg", "Brilon", "Kahler Asten")
+  ))
 
 dir.create("plots", showWarnings = FALSE)
 
@@ -35,8 +36,10 @@ print(descriptive_stats, n = 20)
 
 # ---- 2. Boxplots per station (outliers, distribution location) ----
 boxplot_annual <- ggplot(df_weather, aes(x = station, y = annual)) +
-  geom_boxplot(fill = "grey80", color = "black", linewidth = 0.35,
-               outlier.size = 1.2, outlier.alpha = 0.8) +
+  geom_boxplot(
+    fill = "grey80", color = "black", linewidth = 0.35,
+    outlier.size = 1.2, outlier.alpha = 0.8
+  ) +
   labs(x = NULL, y = "Annual mean temperature [°C]") +
   theme_minimal(base_size = 11) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
@@ -48,7 +51,8 @@ df_long <- df_weather %>%
   select(station, annual, winter_djf, summer_jja) %>%
   pivot_longer(c(annual, winter_djf, summer_jja), names_to = "type", values_to = "temperature") %>%
   mutate(type = recode(type,
-    annual = "Annual mean", winter_djf = "Winter quarter", summer_jja = "Summer quarter"))
+    annual = "Annual mean", winter_djf = "Winter quarter", summer_jja = "Summer quarter"
+  ))
 
 kde_plot <- ggplot(df_long, aes(x = temperature, fill = type, color = type)) +
   geom_density(alpha = 0.35, linewidth = 0.35, na.rm = TRUE) +

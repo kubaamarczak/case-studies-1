@@ -19,7 +19,7 @@ library(forcats)
 library(tibble)
 
 col_main <- "#1a6faf"
-col_alt  <- "#C0392B"
+col_alt <- "#C0392B"
 
 ## -----------------------------------------------------------------------------
 
@@ -29,15 +29,17 @@ col_alt  <- "#C0392B"
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   )
 
 ## Recoding of the separation cell in mnactic identified in step 2
@@ -83,9 +85,9 @@ fit_full$convergence
 ## manually from the coefficient and standard-error matrices
 
 coef_tab <- summary(fit_full)$coefficients
-se_tab   <- summary(fit_full)$standard.errors
-z_tab    <- coef_tab / se_tab
-p_tab    <- 2 * (1 - pnorm(abs(z_tab)))
+se_tab <- summary(fit_full)$standard.errors
+z_tab <- coef_tab / se_tab
+p_tab <- 2 * (1 - pnorm(abs(z_tab)))
 
 round(p_tab[, 1:6], 3)
 
@@ -117,15 +119,17 @@ library(detectseparation)
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = forcats::fct_collapse(mnactic, other = c("other", "community_military")),
@@ -139,10 +143,13 @@ rhs <- "cntry + w6age + gndr + eisced + mnactic + hinctnta + netusoft +
 non_ref_classes <- setdiff(levels(dat$w6sgq4), "gasoline_car")
 
 separation_check <- lapply(non_ref_classes, function(cls) {
-  sub <- dat %>% filter(w6sgq4 %in% c(cls, "gasoline_car")) %>%
+  sub <- dat %>%
+    filter(w6sgq4 %in% c(cls, "gasoline_car")) %>%
     mutate(y = as.numeric(w6sgq4 == cls))
-  fit_sep <- glm(as.formula(paste("y ~", rhs)), data = sub, family = binomial(),
-                 method = "detect_separation")
+  fit_sep <- glm(as.formula(paste("y ~", rhs)),
+    data = sub, family = binomial(),
+    method = "detect_separation"
+  )
   fit_sep
 })
 names(separation_check) <- paste(non_ref_classes, "vs gasoline_car")
@@ -156,7 +163,8 @@ for (nm in names(separation_check)) {
 
 ## Multicollinearity
 fit_vif <- glm(as.formula(paste("I(w6sgq4 == 'walking') ~", rhs)),
-               data = dat, family = binomial())
+  data = dat, family = binomial()
+)
 
 vif_tab <- vif(fit_vif)
 
@@ -166,7 +174,6 @@ print(vif_tab)
 vars_metric <- c("w6age", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8")
 
 empirical_logit <- function(var, n_bins = 6) {
-
   n_distinct_vals <- n_distinct(dat[[var]])
 
   if (n_distinct_vals <= 12) {
@@ -216,7 +223,7 @@ p_linearity <- ggplot(logit_data, aes(x = bin_mean, y = log_odds, colour = class
   geom_point() +
   geom_line() +
   facet_wrap(
-    ~ variable,
+    ~variable,
     scales = "free_x",
     nrow = 2,
     labeller = as_labeller(c(
@@ -228,9 +235,11 @@ p_linearity <- ggplot(logit_data, aes(x = bin_mean, y = log_odds, colour = class
     ))
   ) +
   scale_colour_manual(values = c("#5aa9d6", "#a4c8e1", "#C0392B", "#1a6faf")) +
-  labs(x = "Predictor value (bin mean)",
-       y = "Empirical log-odds relative to gasoline/diesel car",
-       colour = "Mode of transport") +
+  labs(
+    x = "Predictor value (bin mean)",
+    y = "Empirical log-odds relative to gasoline/diesel car",
+    colour = "Mode of transport"
+  ) +
   theme_minimal() +
   theme(
     text = element_text(size = 9),
@@ -247,10 +256,10 @@ p_linearity <- ggplot(logit_data, aes(x = bin_mean, y = log_odds, colour = class
 
 p_linearity
 
-#library(tikzDevice)
-#tikz("linearityinlogits.tex", width = 6, height = 3.5)
-#p_linearity
-#dev.off()
+# library(tikzDevice)
+# tikz("linearityinlogits.tex", width = 6, height = 3.5)
+# p_linearity
+# dev.off()
 
 
 ## it may be worth considering a quadratic age term
@@ -299,7 +308,7 @@ fit_quad <- multinom(
 
 lr_stat <- -2 * (as.numeric(logLik(fit_linear)) - as.numeric(logLik(fit_quad)))
 df_diff <- attr(logLik(fit_quad), "df") - attr(logLik(fit_linear), "df")
-lr_p    <- pchisq(lr_stat, df = df_diff, lower.tail = FALSE)
+lr_p <- pchisq(lr_stat, df = df_diff, lower.tail = FALSE)
 
 data.frame(
   model  = c("Age linear", "Age quadratic"),
@@ -309,16 +318,20 @@ data.frame(
 )
 
 cat("\nLikelihood-ratio test, age linear vs. quadratic\n")
-cat("LR chi-squared =", round(lr_stat, 2), ", df =", df_diff,
-    ", p-value =", signif(lr_p, 3), "\n")
+cat(
+  "LR chi-squared =", round(lr_stat, 2), ", df =", df_diff,
+  ", p-value =", signif(lr_p, 3), "\n"
+)
 ## p < 0.001 => reject H0: There is statistically significant evidence that
 ## the quadratic age term improves model fit.
 
 ## Coefficients of the quadratic age term, walking and public_transport
 ## contrasts
 
-round(summary(fit_quad)$coefficients[c("walking", "public_transport"),
-                                     c("w6age_c", "I(w6age_c^2)")], 4)
+round(summary(fit_quad)$coefficients[
+  c("walking", "public_transport"),
+  c("w6age_c", "I(w6age_c^2)")
+], 4)
 
 ## The quadratic specification improves the fit, AIC 19460.29 versus
 ## 19494.14 for the linear model, LR chi-squared = 41.85, df = 4, p < 0.001.
@@ -337,15 +350,17 @@ round(summary(fit_quad)$coefficients[c("walking", "public_transport"),
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = forcats::fct_collapse(mnactic, other = c("other", "community_military")),
@@ -361,7 +376,7 @@ fit_start <- multinom(
 )
 
 ## Stepwise selection by AIC
-scope_lower <- ~ 1
+scope_lower <- ~1
 scope_upper <- ~ cntry + w6age_c + I(w6age_c^2) + gndr + eisced + mnactic +
   hinctnta + netusoft + hincfel + w6sgq11 + w6sgq12 + w6sgq5 + w6wq2 + w6wq8 + w6sgq22
 
@@ -397,12 +412,14 @@ print(dropped_vars)
 fit_null <- multinom(w6sgq4 ~ 1, data = dat, trace = FALSE)
 
 lr_stat_overall <- -2 * (as.numeric(logLik(fit_null)) - as.numeric(logLik(fit_step)))
-df_overall      <- attr(logLik(fit_step), "df") - attr(logLik(fit_null), "df")
-lr_p_overall    <- pchisq(lr_stat_overall, df = df_overall, lower.tail = FALSE)
+df_overall <- attr(logLik(fit_step), "df") - attr(logLik(fit_null), "df")
+lr_p_overall <- pchisq(lr_stat_overall, df = df_overall, lower.tail = FALSE)
 
 cat("\nLikelihood-ratio test, selected model vs. null model\n")
-cat("LR chi-squared =", round(lr_stat_overall, 2), ", df =", df_overall,
-    ", p-value =", signif(lr_p_overall, 3), "\n")
+cat(
+  "LR chi-squared =", round(lr_stat_overall, 2), ", df =", df_overall,
+  ", p-value =", signif(lr_p_overall, 3), "\n"
+)
 
 ## p < 0.001 => reject H0: The selected model is highly significant
 ## relative to the null model, consistent with the strength of cntry and
@@ -418,15 +435,17 @@ cat("LR chi-squared =", round(lr_stat_overall, 2), ", df =", df_overall,
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = forcats::fct_collapse(mnactic, other = c("other", "community_military")),
@@ -440,7 +459,7 @@ set.seed(2026)
 train_idx <- createDataPartition(dat$w6sgq4, p = 0.75, list = FALSE)
 
 dat_train <- dat[train_idx, ]
-dat_test  <- dat[-train_idx, ]
+dat_test <- dat[-train_idx, ]
 
 cat("Training observations:", nrow(dat_train), "\n")
 cat("Test observations:    ", nrow(dat_test), "\n")
@@ -482,12 +501,14 @@ print(cm)
 fit_null_train <- multinom(w6sgq4 ~ 1, data = dat_train, trace = FALSE)
 
 lr_stat <- -2 * (as.numeric(logLik(fit_null_train)) - as.numeric(logLik(fit_train)))
-df_lr   <- attr(logLik(fit_train), "df") - attr(logLik(fit_null_train), "df")
-lr_p    <- pchisq(lr_stat, df = df_lr, lower.tail = FALSE)
+df_lr <- attr(logLik(fit_train), "df") - attr(logLik(fit_null_train), "df")
+lr_p <- pchisq(lr_stat, df = df_lr, lower.tail = FALSE)
 
 cat("\nLikelihood-ratio test, training model vs. null model\n")
-cat("LR chi-squared =", round(lr_stat, 2), ", df =", df_lr,
-    ", p-value =", signif(lr_p, 3), "\n")
+cat(
+  "LR chi-squared =", round(lr_stat, 2), ", df =", df_lr,
+  ", p-value =", signif(lr_p, 3), "\n"
+)
 
 ## p < 0.001 => reject H0: The training model remains highly significant
 ## relative to its null model, consistent with the result on the full
@@ -503,15 +524,17 @@ cat("LR chi-squared =", round(lr_stat, 2), ", df =", df_lr,
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = forcats::fct_collapse(mnactic, other = c("other", "community_military")),
@@ -534,7 +557,7 @@ set.seed(2026)
 train_idx <- createDataPartition(dat$w6sgq4, p = 0.75, list = FALSE)
 
 dat_train <- dat[train_idx, ]
-dat_test  <- dat[-train_idx, ]
+dat_test <- dat[-train_idx, ]
 
 ## the original, non-upsampled model from step 6 is refitted here as well
 ## so that this script is self-contained and the before/after comparison
@@ -547,7 +570,7 @@ fit_orig <- multinom(
 )
 
 pred_orig <- predict(fit_orig, newdata = dat_test)
-cm_orig   <- confusionMatrix(pred_orig, dat_test$w6sgq4)
+cm_orig <- confusionMatrix(pred_orig, dat_test$w6sgq4)
 
 ## Upsampling the training data
 ## upSample() samples with replacement from every class except the
@@ -558,9 +581,11 @@ cm_orig   <- confusionMatrix(pred_orig, dat_test$w6sgq4)
 
 set.seed(2026)
 
-predictor_vars <- c("cntry", "w6age_c", "gndr", "mnactic", "hinctnta",
-                    "hincfel", "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8",
-                    "w6sgq22")
+predictor_vars <- c(
+  "cntry", "w6age_c", "gndr", "mnactic", "hinctnta",
+  "hincfel", "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8",
+  "w6sgq22"
+)
 
 dat_train_up <- upSample(
   x = dat_train[, predictor_vars],
@@ -592,7 +617,7 @@ print(cm_up)
 ## Side-by-side comparison of class-wise sensitivity before and after
 
 sens_before <- cm_orig$byClass[, "Sensitivity"]
-sens_after  <- cm_up$byClass[, "Sensitivity"]
+sens_after <- cm_up$byClass[, "Sensitivity"]
 
 sens_compare <- data.frame(
   class               = names(sens_before),
@@ -617,15 +642,17 @@ cat("Kappa after upsampling: ", round(cm_up$overall["Kappa"], 3), "\n")
 
 dat <- read_csv("thema5_cleaned.csv", show_col_types = FALSE) %>%
   mutate(
-    w6sgq4   = factor(w6sgq4, levels = c("walking", "bicycle", "public_transport",
-                                         "gasoline_car", "electric_car")),
-    cntry    = factor(cntry),
-    gndr     = factor(gndr),
-    mnactic  = factor(mnactic),
-    eisced   = ordered(eisced, levels = sort(unique(eisced))),
+    w6sgq4 = factor(w6sgq4, levels = c(
+      "walking", "bicycle", "public_transport",
+      "gasoline_car", "electric_car"
+    )),
+    cntry = factor(cntry),
+    gndr = factor(gndr),
+    mnactic = factor(mnactic),
+    eisced = ordered(eisced, levels = sort(unique(eisced))),
     hinctnta = ordered(hinctnta, levels = sort(unique(hinctnta))),
     netusoft = ordered(netusoft, levels = sort(unique(netusoft))),
-    hincfel  = ordered(hincfel, levels = sort(unique(hincfel)))
+    hincfel = ordered(hincfel, levels = sort(unique(hincfel)))
   ) %>%
   mutate(
     mnactic = forcats::fct_collapse(mnactic, other = c("other", "community_military")),
@@ -640,11 +667,13 @@ set.seed(2026)
 
 train_idx <- createDataPartition(dat$w6sgq4, p = 0.75, list = FALSE)
 dat_train <- dat[train_idx, ]
-dat_test  <- dat[-train_idx, ]
+dat_test <- dat[-train_idx, ]
 
-predictor_vars <- c("cntry", "w6age_c", "gndr", "mnactic", "hinctnta",
-                    "hincfel", "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8",
-                    "w6sgq22")
+predictor_vars <- c(
+  "cntry", "w6age_c", "gndr", "mnactic", "hinctnta",
+  "hincfel", "w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8",
+  "w6sgq22"
+)
 
 set.seed(2026)
 dat_train_up <- upSample(
@@ -665,19 +694,19 @@ lr_importance <- Anova(fit_final, type = "II")
 print(lr_importance)
 
 ## Variable grouping for interpretation
-group_demographic   <- c("cntry", "w6age_c", "gndr")
+group_demographic <- c("cntry", "w6age_c", "gndr")
 group_socioeconomic <- c("mnactic", "hinctnta", "hincfel")
-group_climate        <- c("w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8", "w6sgq22")
+group_climate <- c("w6sgq11", "w6sgq12", "w6sgq5", "w6wq2", "w6wq8", "w6sgq22")
 
 lr_table <- as.data.frame(lr_importance) %>%
   tibble::rownames_to_column("variable") %>%
   filter(variable != "Residuals") %>%
   mutate(
     group = case_when(
-      variable %in% group_demographic   ~ "demographic",
+      variable %in% group_demographic ~ "demographic",
       variable %in% group_socioeconomic ~ "socioeconomic",
-      variable %in% group_climate       ~ "climate attitude / wellbeing",
-      TRUE                              ~ "other"
+      variable %in% group_climate ~ "climate attitude / wellbeing",
+      TRUE ~ "other"
     )
   ) %>%
   arrange(group, desc(`LR Chisq`))
@@ -693,9 +722,9 @@ print(lr_table)
 
 ## Odds ratios for the strongest predictor in each group
 coef_final <- summary(fit_final)$coefficients
-se_final   <- summary(fit_final)$standard.errors
-z_final    <- coef_final / se_final
-p_final    <- 2 * (1 - pnorm(abs(z_final)))
+se_final <- summary(fit_final)$standard.errors
+z_final <- coef_final / se_final
+p_final <- 2 * (1 - pnorm(abs(z_final)))
 
 or_final <- exp(coef_final)
 
@@ -742,7 +771,6 @@ hinctnta_results <- cbind(
 hinctnta_results
 
 average_predictions <- lapply(levels(dat_train_up$hinctnta), function(decile) {
-
   newdat <- dat_train_up
   newdat$hinctnta <- ordered(
     decile,
@@ -820,10 +848,10 @@ p_income
 
 ggsave("plots/income_by_decile.png", p_income, width = 6, height = 3.5, dpi = 150, bg = "white")
 
-#library(tikzDevice)
-#tikz("lineplot.tex", width = 5, height = 2.5)
-#p_income
-#dev.off()
+# library(tikzDevice)
+# tikz("lineplot.tex", width = 5, height = 2.5)
+# p_income
+# dev.off()
 
 ## Climate attitude, w6sgq11 and w6sgq5
 ## these enter as numeric (quasi-metric) predictors, so the odds ratio
