@@ -89,4 +89,4 @@ map_plot <- ggplot() +
 
 map_plot
 
-ggsave("plots/station_map.png", map_plot, width = 8, height = 6, dpi = 150)
+ggsave("plots/station_map.png", map_plot, width = 8, height = 6, dpi = 150, bg = "white")

@@ -46,7 +46,7 @@ plot_adiabatic <- ggplot(df_long, aes(x = station, y = temperature, fill = stati
   theme_minimal(base_size = 10) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "bottom")
 
-ggsave("plots/adiabatic_effect.png", plot_adiabatic, width = 8, height = 4.5, dpi = 150)
+ggsave("plots/adiabatic_effect.png", plot_adiabatic, width = 8, height = 4.5, dpi = 150, bg = "white")
 
 cat("\nInterpretation: Der adiabatische Effekt erklärt einen wesentlichen Teil der\n")
 cat("räumlichen Unterschiede, aber Modell 2 zeigt, dass einzelne Stationen auch nach\n")

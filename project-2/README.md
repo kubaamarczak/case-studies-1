@@ -17,11 +17,11 @@ Asten), provided by the [European Climate Assessment & Dataset](https://www.ecad
 
 | Step | Script | Method |
 |---|---|---|
-| Data preparation | `R/01_data_cleaning.R` | Import, unit conversion, missing values |
-| Descriptive analysis | `R/02_eda.R` | Distribution shape per station (boxplot, KDE, QQ-plot) |
-| Hypothesis testing | `R/03_hypothesis_tests.R` | Welch's t-test, Kruskal-Wallis, pairwise Wilcoxon (Holm) |
-| Regression analysis | `R/04_adiabatic_effect.R` | Linear model, model comparison |
-| Spatial visualization | `R/05_spatial_map.R` | Station map of NRW (temperature & elevation) |
+| Data preparation | `01_data_cleaning.R` | Import, unit conversion, missing values |
+| Descriptive analysis | `02_eda.R` | Distribution shape per station (boxplot, KDE, QQ-plot) |
+| Hypothesis testing | `03_hypothesis_tests.R` | Welch's t-test, Kruskal-Wallis, pairwise Wilcoxon (Holm) |
+| Regression analysis | `04_adiabatic_effect.R` | Linear model, model comparison |
+| Spatial visualization | `05_spatial_map.R` | Station map of NRW (temperature & elevation) |
 
 ## Results
 

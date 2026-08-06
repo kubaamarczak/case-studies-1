@@ -41,7 +41,7 @@ boxplot_annual <- ggplot(df_weather, aes(x = station, y = annual)) +
   theme_minimal(base_size = 11) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 
-ggsave("plots/boxplot_annual.png", boxplot_annual, width = 6, height = 4, dpi = 150)
+ggsave("plots/boxplot_annual.png", boxplot_annual, width = 6, height = 4, dpi = 150, bg = "white")
 
 # ---- 3. Verteilungsform prüfen: KDE + QQ-Plot je Station ----
 df_long <- df_weather %>%
@@ -56,7 +56,7 @@ kde_plot <- ggplot(df_long, aes(x = temperature, fill = type, color = type)) +
   labs(x = "Temperatur [°C]", y = "Dichte", fill = "Zeitraum", color = "Zeitraum") +
   theme_minimal(base_size = 10)
 
-ggsave("plots/kde_by_station.png", kde_plot, width = 8, height = 5, dpi = 150)
+ggsave("plots/kde_by_station.png", kde_plot, width = 8, height = 5, dpi = 150, bg = "white")
 
 qq_plot <- ggplot(df_weather, aes(sample = annual)) +
   stat_qq(size = 0.8, alpha = 0.7) +
@@ -65,7 +65,7 @@ qq_plot <- ggplot(df_weather, aes(sample = annual)) +
   labs(x = "Theoretische Quantile", y = "Empirische Quantile") +
   theme_minimal(base_size = 10)
 
-ggsave("plots/qq_annual.png", qq_plot, width = 8, height = 5, dpi = 150)
+ggsave("plots/qq_annual.png", qq_plot, width = 8, height = 5, dpi = 150, bg = "white")
 
 # ---- 4. Zeitreihe (Jahresmittel je Station) ----
 timeseries_plot <- ggplot(df_weather, aes(x = year, y = annual, color = station)) +
@@ -73,7 +73,7 @@ timeseries_plot <- ggplot(df_weather, aes(x = year, y = annual, color = station)
   labs(x = "Jahr", y = "Jahresmitteltemperatur [°C]", color = "Station") +
   theme_minimal(base_size = 11)
 
-ggsave("plots/timeseries_annual.png", timeseries_plot, width = 7, height = 4, dpi = 150)
+ggsave("plots/timeseries_annual.png", timeseries_plot, width = 7, height = 4, dpi = 150, bg = "white")
 
 cat("EDA abgeschlossen. Plots in plots/, Kennzahlen in data/descriptive_stats.csv\n")
 cat("Verteilungsform: Histogramme/KDE zeigen je Station eine annähernd glockenförmige\n")
