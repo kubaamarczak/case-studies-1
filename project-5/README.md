@@ -1,89 +1,123 @@
-# Climate Analysis Ruhr Area & Sauerland: Temporal and Spatial Temperature Differences
-
+# Classification of Everyday Mobility Choices
+ 
 Case study from the module *Fallstudien I* (Faculty of Statistics, TU Dortmund).
 Group project.
-
+ 
 ## Research Question
-
-Has the climate in the Ruhr area noticeably warmed over the past decades?
-How large are the temperature differences between six stations in the
-Ruhr area and Sauerland — can they be explained by elevation alone?
-
-**Data:** Historical daily mean temperatures (aggregated to annual/seasonal values)
-from six weather stations (Duisburg, Essen, Dortmund, Arnsberg, Brilon, Kahler
-Asten), provided by the [European Climate Assessment & Dataset](https://www.ecad.eu/download/millennium/millennium.php).
-
+ 
+Which demographic, socioeconomic, and attitudinal factors explain the choice of
+main mode of transport? A multinomial logistic regression (MLR) is fitted and
+compared to an XGBoost model in terms of predictive performance. Additionally,
+the effect of upsampling on the detection of minority classes is examined.
+ 
+**Data:** Sixth wave of the CRONOS-3 panel study (CROss-National Online Survey),
+conducted by the [European Social Survey (ESS)](https://ess.sikt.no/en/study/dad96456-2ab4-42e3-8272-166bf5749bf9/).
+n = 9585 raw observations, reduced to n = 7330 after removing unclassifiable
+target responses and complete-case filtering. Five mode-of-transport classes are
+distinguished: walking, bicycle, public transport, gasoline/diesel car, and
+electric/hybrid car.
+ 
 ## Approach
-
+ 
 | Step | Script | Method |
 |---|---|---|
-| Data preparation | `R/01_data_cleaning.R` | Import, unit conversion, missing values |
-| Descriptive analysis | `R/02_eda.R` | Distribution shape per station (boxplot, KDE, QQ-plot) |
-| Hypothesis testing | `R/03_hypothesis_tests.R` | Welch's t-test, Kruskal-Wallis, pairwise Wilcoxon (Holm) |
-| Regression analysis | `R/04_adiabatic_effect.R` | Linear model, model comparison |
-| Spatial visualization | `R/05_spatial_map.R` | Station map of NRW (temperature & elevation) |
-
+| Data preparation | `R/01_data_cleaning.R` | Import, missing-value recoding, complete-case filtering |
+| Descriptive analysis | `R/02_eda.R` | Variable screening (Cramér's V, Kruskal-Wallis/ε²), stacked bar and box plots |
+| Multinomial logistic regression | `R/03_mult_log_reg.R` | Assumption checks, stepwise AIC selection, upsampling, odds ratios |
+| XGBoost | `R/04_xgboost.R` | Cross-validated gradient boosting, upsampling, feature importance |
+ 
 ## Results
-
-![Station map](plots/station_map.png)
-
-At a glance: temperature noticeably decreases from the northwest (Duisburg,
-low elevation, warmer) toward the southeast (Kahler Asten, the highest
-elevation in the Sauerland, considerably colder) — an initial visual
-indication of the elevation effect quantified further below.
-
-**1. Temporal warming (Essen, 1950–1980 vs. 1990–2020)**
-
-The annual mean temperature rose from 9.52 °C to 10.58 °C. Although the
-variances of the two periods were classified as statistically homogeneous, a
-Welch's t-test was used (minimal power loss compared to the standard t-test):
-**p < 0.001**, effect size Cohen's d ≈ 1.6 (very large effect).
-
-**2. Spatial differences between the 6 stations (1950–1995)**
-
-A Kruskal-Wallis test (robust alternative to ANOVA) shows statistically
-significant differences between the stations (**p < 0.001**, ε² ≈ 0.84 —
-strong effect). The pairwise Wilcoxon test (Holm-corrected) shows that all
-station pairs differ significantly — with the exception of Dortmund–Essen.
-
-**3. Does elevation explain the spatial differences?**
-
-![Adiabatic effect](plots/adiabatic_effect.png)
-
-A linear regression of annual mean temperature on elevation confirms the
-expected adiabatic effect almost exactly: **−0.65 °C per 100 m of elevation**
-(reference value: −0.65 °C/100m). However, a model comparison shows that a
-model additionally accounting for the individual station explains the data
-significantly better (F-test, p < 0.001) — elevation therefore only partially
-explains the spatial differences; other local factors play a role as well.
-
+ 
+![Mode of transport by country](plots/mode_by_country.png)
+ 
+At a glance: the target variable is strongly imbalanced — gasoline/diesel car
+accounts for 49.5 % of respondents (walking 17.4 %, electric/hybrid car 12.7 %,
+public transport 11.8 %, bicycle 8.6 %) — and mode-of-transport shares differ
+sharply by country, from car-dominated Slovenia and Portugal to Hungary's high
+shares of walking, cycling, and public transport.
+ 
+**1. Predictor importance (Type II likelihood-ratio tests)**
+ 
+Country is by far the strongest predictor (LR-χ² = 2988.72, df = 40, p < 0.001),
+followed by satisfaction with public transport infrastructure (757.44), income
+decile (569.86), and main activity (300.28). All 13 predictors in the final
+model contribute significantly (p < 0.05).
+ 
+**2. Country and income effects**
+ 
+Odds ratios relative to gasoline/diesel car (reference country: Austria) vary
+substantially — e.g. Iceland shows an OR of 5.43 for electric/hybrid cars, while
+Hungary shows elevated odds for walking (2.43) and bicycle (2.80). Income shows
+a clean gradient: the predicted probability of choosing an electric/hybrid car
+rises from below 10 % in the lowest income deciles to over 30 % in the highest,
+with an OR of 2.35 in the top decile relative to decile 1.
+ 
+![Predicted probability by income decile](plots/income_by_decile.png)
+ 
+**3. Climate attitude**
+ 
+A one-unit increase in climate concern raises the odds of bicycle (OR = 1.55),
+public transport (OR = 1.43), and walking (OR = 1.34) relative to gasoline/diesel
+car, but is not significant for electric/hybrid cars (OR = 1.07) — suggesting
+EV adoption in this sample is driven more by income than by climate attitude.
+ 
+**4. Nonlinear age effect**
+ 
+The empirical logit plot indicated a u-shaped pattern for age in the public
+transport contrast. A quadratic age term significantly improves model fit
+(AIC 17679.27 → 17653.06, LR-χ²(4) = 34.21, p < 0.001) and is retained in all
+subsequent models. Stepwise AIC selection additionally removes internet use
+and education level, arriving at a final model with AIC = 17636.98.
+ 
+**5. Prediction and class imbalance**
+ 
+| Metric | MLR | MLR + upsampling | XGBoost | XGBoost + upsampling |
+|---|---|---|---|---|
+| Accuracy | 53.66 % | 38.47 % | 54.30 % | 41.70 % |
+| Cohen's Kappa | 0.211 | 0.213 | 0.204 | 0.209 |
+| Balanced Accuracy | 58.19 % | 63.01 % | 58.74 % | 63.93 % |
+| Macro Recall | 32.59 % | 41.40 % | 31.88 % | 38.16 % |
+ 
+Without upsampling, both models classify almost exclusively the majority class
+(gasoline/diesel car sensitivity 87.97 % for MLR, versus 8–25 % for all other
+classes). Upsampling the training data trades overall accuracy for a markedly
+more balanced classification (e.g. MLR bicycle sensitivity rises from 8.23 % to
+39.24 %). XGBoost performs on par with the MLR overall, with no clear predictive
+advantage — given comparable performance and the interpretability of odds
+ratios, the multinomial logistic regression is preferred for the substantive
+analysis.
+ 
 ## Statistical Methodology in Detail
-
-- **Assumption checks before test selection:** F-test for homogeneity of
-  variance before choosing between Student's and Welch's t-test
-- **Robust alternatives:** Kruskal-Wallis instead of ANOVA, since with six
-  groups the normality assumption shouldn't be overstretched
-- **Correction for multiple testing:** Holm correction for 15 pairwise
-  comparisons, to control the inflation of the type I error
-- **Effect sizes instead of p-values alone:** Cohen's d and epsilon-squared,
-  to assess practical relevance alongside statistical significance
-
+ 
+- **Assumption checks before model finalization:** separation test
+  (`detectseparation`), generalized variance inflation factors for
+  multicollinearity (all GVIF^(1/2df) between 1.0 and 1.6), and empirical logit
+  plots to assess linearity in the log-odds
+- **Nonlinear terms where warranted:** a quadratic age term is added and
+  confirmed via likelihood-ratio test rather than assumed a priori
+- **Automatic model selection:** stepwise AIC selection (both directions) to
+  reach a parsimonious final model
+- **Class imbalance handling:** upsampling of the training data only (test set
+  untouched), evaluated via Balanced Accuracy and Macro Recall rather than
+  accuracy alone, since accuracy is misleading under strong class imbalance
+- **Method comparison:** XGBoost as a non-linear, non-parametric benchmark,
+  evaluated with the identical train/test split and metrics as the MLR to
+  ensure a fair comparison
 ## Reproducibility
-
+ 
 ```bash
 git clone https://github.com/kubaamarczak/case-studies-1
-cd project-2
+cd project-5
 Rscript R/01_data_cleaning.R
 Rscript R/02_eda.R
-Rscript R/03_hypothesis_tests.R
-Rscript R/04_adiabatic_effect.R
-Rscript R/05_spatial_map.R
+Rscript R/03_mult_log_reg.R
+Rscript R/04_xgboost.R
 ```
-
-Required packages: `dplyr`, `readr`, `tidyr`, `ggplot2`, `patchwork`, `sf`, `ggrepel`.
-
-The NRW geometry for the map and the river course require internet access to run.
-
+ 
+Required packages: `readr`, `dplyr`, `tidyr`, `ggplot2`, `patchwork`, `nnet`,
+`car`, `MASS`, `caret`, `forcats`, `tibble`, `detectseparation`, `xgboost`,
+`Matrix`.
+ 
 ## Tools
-
-R (tidyverse, ggplot2)
+ 
+R (tidyverse, ggplot2, nnet, xgboost)

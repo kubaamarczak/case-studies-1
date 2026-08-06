@@ -179,6 +179,8 @@ p_hinctnta <- plot_stacked("hinctnta")
 
 p_cntry
 
+ggsave("plots/mode_by_country.png", p_cntry, width = 6, height = 3.5, dpi = 150, bg = "white")
+
 #library(tikzDevice)
 #tikz("stackedcountry.tex", width = 4.5, height = 2)
 #p_cntry

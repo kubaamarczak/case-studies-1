@@ -470,15 +470,9 @@ pred_test <- predict(fit_train, newdata = dat_test)
 ## class), Kappa, and class-wise sensitivity, specificity, and balanced
 ## accuracy
 
-## ⚠️⚠️ IN THE REPORT -----------------------------------------------------------
-##------------------------------------------------------------------------------
-
 cm <- confusionMatrix(pred_test, dat_test$w6sgq4)
 
 print(cm)
-
-## ⚠️⚠️-------------------------------------------------------------------------
-##------------------------------------------------------------------------------
 
 ## Likelihood-ratio test of the training model against a null model fitted
 ## on the same training data
@@ -823,6 +817,8 @@ p_income <- ggplot(
   )
 
 p_income
+
+ggsave("plots/income_by_decile.png", p_income, width = 6, height = 3.5, dpi = 150, bg = "white")
 
 #library(tikzDevice)
 #tikz("lineplot.tex", width = 5, height = 2.5)
