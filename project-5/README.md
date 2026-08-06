@@ -21,10 +21,10 @@ electric/hybrid car.
  
 | Step | Script | Method |
 |---|---|---|
-| Data preparation | `R/01_data_cleaning.R` | Import, missing-value recoding, complete-case filtering |
-| Descriptive analysis | `R/02_eda.R` | Variable screening (Cramér's V, Kruskal-Wallis/ε²), stacked bar and box plots |
-| Multinomial logistic regression | `R/03_mult_log_reg.R` | Assumption checks, stepwise AIC selection, upsampling, odds ratios |
-| XGBoost | `R/04_xgboost.R` | Cross-validated gradient boosting, upsampling, feature importance |
+| Data preparation | `01_data_cleaning.R` | Import, missing-value recoding, complete-case filtering |
+| Descriptive analysis | `02_eda.R` | Variable screening (Cramér's V, Kruskal-Wallis/ε²), stacked bar and box plots |
+| Multinomial logistic regression | `03_mult_log_reg.R` | Assumption checks, stepwise AIC selection, upsampling, odds ratios |
+| XGBoost | `04_xgboost.R` | Cross-validated gradient boosting, upsampling, feature importance |
  
 ## Results
  
