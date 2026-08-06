@@ -15,13 +15,13 @@ report.
  
 ## Topics
  
-| # | Topic | Focus | Data | Deadline |
-|---|---|---|---|---|
-| 1 | Education and employment in German counties | Descriptive statistics, outlier handling, correlation analysis (East vs. West Germany) | Zensus 2022 (Destatis), 400 German counties | 29 Apr 2026 |
-| 2 | [Climate differences in the Ruhr area](project-2) | Distribution comparison, hypothesis testing (Welch's t-test, Kruskal-Wallis), regression, multiple testing | ECA&D station data, 6 weather stations in NRW | 20 May 2026 |
-| 3 | Concrete compressive strength | Multiple linear regression, model selection, multicollinearity (VIF), influential observations | UCI Concrete Compressive Strength dataset, n = 1030 | 10 Jun 2026 |
-| 4 | Early detection of diabetes risk | Logistic regression, complete separation, classification rule, Hosmer-Lemeshow test | Pima Indians Diabetes dataset (Kaggle), n = 768 | 28 Jun 2026 |
-| 5 | [Classifying everyday mobility choices](project-5) | Multinomial logistic regression vs. XGBoost, class imbalance / upsampling | ESS CRONOS-3 Wave 6 panel survey, n = 7330 | 15 Jul 2026 |
+| # | Topic | Focus | Data |
+|---|---|---|---|
+| 1 | Education and employment in German counties | Descriptive statistics, outlier handling, correlation analysis (East vs. West Germany) | Zensus 2022 (Destatis), 400 German counties |
+| 2 | [Climate differences in the Ruhr area](project-2) | Distribution comparison, hypothesis testing (Welch's t-test, Kruskal-Wallis), regression, multiple testing | ECA&D station data, 6 weather stations in NRW |
+| 3 | Concrete compressive strength | Multiple linear regression, model selection, multicollinearity (VIF), influential observations | UCI Concrete Compressive Strength dataset, n = 1030 |
+| 4 | Early detection of diabetes risk | Logistic regression, complete separation, classification rule, Hosmer-Lemeshow test | Pima Indians Diabetes dataset (Kaggle), n = 768 |
+| 5 | [Classifying everyday mobility choices](project-5) | Multinomial logistic regression vs. XGBoost, class imbalance / upsampling | ESS CRONOS-3 Wave 6 panel survey, n = 7330 |
  
 This repository showcases Topics 2 and 5 in full, with code, plots, and
 results in their respective folders. Topics 1, 3, and 4 are summarized here
