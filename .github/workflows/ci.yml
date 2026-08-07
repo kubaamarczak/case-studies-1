@@ -17,15 +17,35 @@ jobs:
         with:
           use-public-rspm: true
 
+      # Installiert lintr + die tatsaechlichen Projekt-Pakete (aus README "Tools").
+      # Ohne die echten Pakete kann object_usage_linter Funktionen wie ggplot()
+      # oder mutate() nicht auflösen und wirft False Positives ("no package
+      # called ...", "no visible global function definition").
+      # sf/geodata brauchen Systemabhaengigkeiten (GDAL/GEOS/PROJ) - die
+      # setup-r-dependencies Action installiert diese auf ubuntu automatisch mit.
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
             any::lintr
+            any::tidyverse
+            any::caret
+            any::nnet
+            any::car
+            any::MASS
+            any::detectseparation
+            any::xgboost
+            any::sf
+            any::geodata
+            any::osmdata
+            any::ggrepel
+            any::patchwork
 
       # Prueft Stil/Syntax aller R-Skripte in allen project-#/ Ordnern.
       # Fuehrt die Skripte NICHT aus, da mehrere Themen registrierungspflichtige
       # Datensaetze (z.B. ESS CRONOS-3) oder schwere Geo-Abhaengigkeiten
       # (sf, geodata, osmdata) brauchen, die in CI unpraktisch sind.
+      # Regelset wird ueber die .lintr-Datei im Repo-Root gesteuert
+      # (siehe dort fuer Begruendung, welche Linter deaktiviert sind).
       - name: Lint R scripts
         run: |
           problems <- lintr::lint_dir(".")
