@@ -1,0 +1,21 @@
+linters: linters_with_defaults(
+  # 80 Zeichen sind fuer Data-Science-Code mit dplyr/ggplot-Ketten und langen
+  # Spaltennamen unrealistisch eng. 62 der aktuellen Zeilen im Repo ueberschreiten
+  # bereits das Default-Limit von 80 - 100 ist praxisnaeher, ohne Zeilen komplett
+  # freizugeben.
+  line_length_linter = line_length_linter(100),
+
+  # dplyr/ggplot arbeiten mit NSE (Non-Standard Evaluation): Spaltennamen wie
+  # in mutate(x = ...) oder aes(x = ...) sind fuer object_usage_linter nicht
+  # sichtbar und werden faelschlich als "undefined" gemeldet. Deshalb aus.
+  object_usage_linter = NULL,
+
+  # Roxygen-Kommentare (#') und erklaerende Kommentare mit Code-Beispielen
+  # (z.B. in den Header-Bloecken) loesen sonst False Positives aus.
+  commented_code_linter = NULL
+)
+
+exclusions: list(
+  "project-2/data",
+  "project-5/data"
+)
