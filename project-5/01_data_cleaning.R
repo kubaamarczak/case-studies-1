@@ -43,7 +43,7 @@ col_alt <- "#C0392B"
 raw <- 
   read.csv("/Users/jakubmarczak/Downloads/case-studies-1/project-5/data/CRON3w6e01_selection.csv")
 
-raw <- raw |>
+raw <- raw %>%
   dplyr::select(-1)
 
 ## Missing-value codes per variable, according to the codebook

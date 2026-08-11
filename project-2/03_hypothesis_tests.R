@@ -78,7 +78,8 @@ cat("Epsilon-squared (effect size):", round(epsilon_sq, 3), "\n")
 
 # Pairwise Wilcoxon test with Holm correction 
 # (which stations differ specifically?)
-pairwise_result <- pairwise.wilcox.test(df_spatial$annual, df_spatial$station, p.adjust.method = "holm")
+pairwise_result <- pairwise.wilcox.test(df_spatial$annual, df_spatial$station, 
+                                        p.adjust.method = "holm")
 cat("\nPairwise Wilcoxon test (Holm-adjusted p-values):\n")
 print(round(pairwise_result$p.value, 4))
 
