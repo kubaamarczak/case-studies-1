@@ -42,7 +42,8 @@ cat("Welch's t-test (H1: warming): p =", signif(welch_test$p.value, 3), "\n")
 cohens_d <- function(x, y) {
   nx <- sum(!is.na(x))
   ny <- sum(!is.na(y))
-  pooled_sd <- sqrt(((nx - 1) * var(x, na.rm = TRUE) + (ny - 1) * var(y, na.rm = TRUE)) / (nx + ny - 2))
+  pooled_sd <- sqrt(((nx - 1) * var(x, na.rm = TRUE) + (ny - 1) * 
+                       var(y, na.rm = TRUE)) / (nx + ny - 2))
   (mean(x, na.rm = TRUE) - mean(y, na.rm = TRUE)) / pooled_sd
 }
 d <- cohens_d(essen_early, essen_late)
@@ -75,7 +76,8 @@ k_groups <- n_distinct(df_spatial$station)
 epsilon_sq <- (kw_test$statistic - k_groups + 1) / (n_obs - k_groups)
 cat("Epsilon-squared (effect size):", round(epsilon_sq, 3), "\n")
 
-# Pairwise Wilcoxon test with Holm correction (which stations differ specifically?)
+# Pairwise Wilcoxon test with Holm correction 
+# (which stations differ specifically?)
 pairwise_result <- pairwise.wilcox.test(df_spatial$annual, df_spatial$station, p.adjust.method = "holm")
 cat("\nPairwise Wilcoxon test (Holm-adjusted p-values):\n")
 print(round(pairwise_result$p.value, 4))

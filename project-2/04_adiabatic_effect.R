@@ -30,8 +30,10 @@ print(anova(model_elev, model_elev_station))
 cat("\n--- Kruskal-Wallis: differences before vs. after elevation correction ---\n")
 kw_raw <- kruskal.test(annual ~ station, data = df_weather)
 kw_corrected <- kruskal.test(annual_corrected ~ station, data = df_weather)
-cat("Without elevation correction: chi² =", round(kw_raw$statistic, 2), ", p =", signif(kw_raw$p.value, 3), "\n")
-cat("With elevation correction:    chi² =", round(kw_corrected$statistic, 2), ", p =", signif(kw_corrected$p.value, 3), "\n")
+cat("Without elevation correction: chi² =", round(kw_raw$statistic, 2), 
+    ", p =", signif(kw_raw$p.value, 3), "\n")
+cat("With elevation correction:    chi² =", round(kw_corrected$statistic, 2), 
+    ", p =", signif(kw_corrected$p.value, 3), "\n")
 
 # ---- Visualization: boxplot before/after elevation correction ----
 df_long <- df_weather %>%
@@ -47,7 +49,8 @@ plot_adiabatic <- ggplot(df_long, aes(x = station, y = temperature, fill = stati
   theme_minimal(base_size = 10) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "bottom")
 
-ggsave("plots/adiabatic_effect.png", plot_adiabatic, width = 8, height = 4.5, dpi = 150, bg = "white")
+ggsave("plots/adiabatic_effect.png", plot_adiabatic, 
+       width = 8, height = 4.5, dpi = 150, bg = "white")
 
 cat("\nInterpretation: The adiabatic effect explains a substantial part of the\n")
 cat("spatial differences, but Model 2 shows that individual stations still\n")

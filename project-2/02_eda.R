@@ -77,8 +77,10 @@ timeseries_plot <- ggplot(df_weather, aes(x = year, y = annual, color = station)
   labs(x = "Year", y = "Annual mean temperature [°C]", color = "Station") +
   theme_minimal(base_size = 11)
 
-ggsave("plots/timeseries_annual.png", timeseries_plot, width = 7, height = 4, dpi = 150, bg = "white")
+ggsave("plots/timeseries_annual.png", timeseries_plot, 
+       width = 7, height = 4, dpi = 150, bg = "white")
 
 cat("EDA complete. Plots in plots/, statistics in data/descriptive_stats.csv\n")
 cat("Distribution shape: histograms/KDE show an approximately bell-shaped\n")
-cat("distribution per station, QQ plots lie close to the diagonal -> normal distribution approximately plausible.\n")
+cat("distribution per station, QQ plots lie close to the diagonal -> 
+    normal distribution approximately plausible.\n")
