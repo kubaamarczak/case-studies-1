@@ -3,7 +3,8 @@ linters: linters_with_defaults(
     object_usage_linter = NULL,
     commented_code_linter = NULL,
     pipe_consistency_linter = pipe_consistency_linter(pipe = "%>%"),
-    object_name_linter = NULL
+    object_name_linter = NULL,
+    trailing_whitespace_linter = NULL
   )
 exclusions: list(
     "project-2/data",
