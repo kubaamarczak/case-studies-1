@@ -1,4 +1,8 @@
 # Fallstudien I — Case Studies
+
+[![CI](https://github.com/kubaamarczak/case-studies-1/actions/workflows/ci.yml/badge.svg)](https://github.com/kubaamarczak/case-studies-1/actions/workflows/ci.yml)
+![R](https://img.shields.io/badge/R-276DC3?logo=r&logoColor=white)
+![ggplot2](https://img.shields.io/badge/ggplot2-276DC3)
  
 Repository of case studies for the module *Fallstudien I* (Faculty of Statistics,
 TU Dortmund).
